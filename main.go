@@ -2,46 +2,22 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"log"
-	"net/http"
 	"os"
 	"path"
+	"sort"
 	"strings"
+
+	"github.com/lithammer/fuzzysearch/fuzzy"
 )
 
-func getBoxArtHtml() *os.File {
-	const htmlFile = "boxart.html"
-
-	f, err := os.Open(htmlFile)
-	if err == nil {
-		fmt.Println("Using cached box art html file")
-		return f
-	}
-
-	const boxArtUrl = "https://thumbnails.libretro.com/Nintendo%20-%20Super%20Nintendo%20Entertainment%20System/Named_Boxarts/"
-	fmt.Println("Downloading box art from: ", boxArtUrl)
-	res, err := http.Get(boxArtUrl)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer res.Body.Close()
-
-	out, err := os.Create(htmlFile)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer out.Close()
-
-	_, err = io.Copy(out, res.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return out
-}
-
 func main() {
+	// show file and line number
+	log.SetFlags(log.Llongfile)
+
+	remoteRomFiles, allRemoteRomNames := getRemoteRomFiles("snes")
+
+	// Now go through my local files and look for a match on a remote file
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatal(err)
@@ -59,15 +35,37 @@ func main() {
 	filesExtensions := path.Ext(files[0].Name())
 	fmt.Println("File extension: ", filesExtensions)
 
-	if false {
-		for _, file := range files {
-			fileName := file.Name()
-			fileNameWithoutExtension := strings.TrimSuffix(fileName, filesExtensions)
-			fmt.Println(fileNameWithoutExtension)
+	romFiles := make([]RomFile, len(files))
+	var missingRemotes []string
+
+	for index, file := range files {
+		fileName := file.Name()
+		fileNameWithoutExtension := strings.TrimSuffix(fileName, filesExtensions)
+		results := fuzzy.RankFindFold(fileNameWithoutExtension, allRemoteRomNames)
+		sort.Sort(results)
+		// fmt.Printf("Searching for \"%s\"\n", fileNameWithoutExtension)
+		// fmt.Println(results)
+
+		if results.Len() > 0 {
+			remoteRomFile := remoteRomFiles[results[0].Target]
+			romFiles[index] = RomFile{
+				localName: fileName,
+				remoteRom: remoteRomFile,
+			}
+		} else {
+			missingRemotes = append(missingRemotes, fileName)
 		}
 	}
 
-	f := getBoxArtHtml()
-	defer f.Close()
-	fmt.Println("filename: ", f.Name())
+	PrettyPrint(missingRemotes)
+}
+
+type RemoteRomFile struct {
+	remoteName   string
+	remoteBoxArt string
+}
+
+type RomFile struct {
+	localName string
+	remoteRom RemoteRomFile
 }
