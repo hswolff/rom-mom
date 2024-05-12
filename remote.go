@@ -65,7 +65,14 @@ func getBoxArtHtml(console string) *os.File {
 	return out
 }
 
-func getRemoteRomFiles(console string) (map[string]RemoteRomFile, []string) {
+type RemoteRomFile struct {
+	remoteName   string
+	remoteBoxArt string
+}
+
+type RemoteCache = map[string]RemoteRomFile
+
+func getRemoteRomFiles(console string) (RemoteCache, []string) {
 	f := getBoxArtHtml(console)
 	defer f.Close()
 
@@ -74,7 +81,7 @@ func getRemoteRomFiles(console string) (map[string]RemoteRomFile, []string) {
 		log.Fatal(err)
 	}
 
-	remoteRomFiles := make(map[string]RemoteRomFile)
+	remoteRomFiles := make(RemoteCache)
 
 	allRemoteRomNames := doc.Find("a").Map(func(_ int, s *goquery.Selection) string {
 		// For each item found, get the title
