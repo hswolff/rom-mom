@@ -66,8 +66,8 @@ func getBoxArtHtml(console string) *os.File {
 }
 
 type RemoteRomFile struct {
-	remoteName   string
-	remoteBoxArt string
+	RemoteName   string
+	RemoteBoxArt string
 }
 
 type RemoteCache = map[string]RemoteRomFile
@@ -92,8 +92,8 @@ func getRemoteRomFiles(console string) (RemoteCache, []string) {
 		remoteBoxArt, _ := url.JoinPath(boxArtUrl, anchor)
 
 		remoteRomFiles[remoteName] = RemoteRomFile{
-			remoteName:   remoteName,
-			remoteBoxArt: remoteBoxArt,
+			RemoteName:   remoteName,
+			RemoteBoxArt: remoteBoxArt,
 		}
 
 		return remoteName

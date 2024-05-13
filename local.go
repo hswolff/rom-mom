@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"path"
@@ -12,50 +11,47 @@ import (
 )
 
 type RomFile struct {
-	localName string
-	remoteRom RemoteRomFile
+	LocalName  string
+	RemoteRom  RemoteRomFile
+	AllMatches fuzzy.Ranks
 }
 
-func calculateLocalDeltas(remoteRomFiles RemoteCache, allRemoteRomNames []string) {
-	// Now go through my local files and look for a match on a remote file
-	homeDir, err := os.UserHomeDir()
+func calculateLocalDeltas(console string, romDir string) {
+	romFiles, err := os.ReadDir(romDir)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	romDir := path.Join(homeDir, "Downloads", "games for anbernic", "SNES")
-
-	files, err := os.ReadDir(romDir)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println("In directory: ", romDir)
-
-	filesExtensions := path.Ext(files[0].Name())
-	fmt.Println("File extension: ", filesExtensions)
-
-	romFiles := make([]RomFile, len(files))
+	filesExtensions := path.Ext(romFiles[0].Name())
+	romFileCache := []RomFile{}
 	var missingRemotes []string
+	possibleMismatches := []RomFile{}
 
-	for index, file := range files {
+	remoteRomFiles, allRemoteRomNames := getRemoteRomFiles(console)
+
+	for _, file := range romFiles {
 		fileName := file.Name()
 		fileNameWithoutExtension := strings.TrimSuffix(fileName, filesExtensions)
 		results := fuzzy.RankFindFold(fileNameWithoutExtension, allRemoteRomNames)
 		sort.Sort(results)
 		// fmt.Printf("Searching for \"%s\"\n", fileNameWithoutExtension)
-		// fmt.Println(results)
 
 		if results.Len() > 0 {
 			remoteRomFile := remoteRomFiles[results[0].Target]
-			romFiles[index] = RomFile{
-				localName: fileName,
-				remoteRom: remoteRomFile,
+			romFile := RomFile{
+				LocalName:  fileName,
+				RemoteRom:  remoteRomFile,
+				AllMatches: results,
+			}
+			romFileCache = append(romFileCache, romFile)
+
+			if results[0].Distance > 20 {
+				possibleMismatches = append(possibleMismatches, romFile)
 			}
 		} else {
 			missingRemotes = append(missingRemotes, fileName)
 		}
 	}
 
-	PrettyPrint(missingRemotes)
+	PrettyPrint(possibleMismatches)
 }

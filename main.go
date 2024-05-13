@@ -1,13 +1,22 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"os"
+	"path"
 )
 
 func main() {
 	// show file and line number
 	log.SetFlags(log.Llongfile)
 
-	remoteRomFiles, allRemoteRomNames := getRemoteRomFiles("snes")
-	calculateLocalDeltas(remoteRomFiles, allRemoteRomNames)
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal(err)
+	}
+	romDir := path.Join(homeDir, "Downloads", "games for anbernic", "SNES")
+	fmt.Println("In directory: ", romDir)
+
+	calculateLocalDeltas("snes", romDir)
 }
