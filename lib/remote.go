@@ -1,4 +1,4 @@
-package main
+package lib
 
 import (
 	"fmt"
@@ -15,21 +15,19 @@ import (
 const rootPath = "https://thumbnails.libretro.com"
 const boxArtPath = "Named_Boxarts"
 
-var consoleToPath = map[string]string{
+var ConsolesAvailable = map[string]string{
 	"snes": "Nintendo%20-%20Super%20Nintendo%20Entertainment%20System",
 }
 
 func createBoxArtUrl(console string) string {
-	res, err := url.JoinPath(rootPath, consoleToPath[console], boxArtPath)
+	res, err := url.JoinPath(rootPath, ConsolesAvailable[console], boxArtPath)
 	if err != nil {
 		log.Fatal(err)
 	}
 	return res
 }
 
-var boxArtUrl = createBoxArtUrl("snes")
-
-func getBoxArtHtml(console string) *os.File {
+func getBoxArtHtml(console string, boxArtUrl string) *os.File {
 	folderName := "boxart"
 	htmlFile := path.Join(folderName, fmt.Sprintf("%s.html", console))
 
@@ -73,7 +71,9 @@ type RemoteRomFile struct {
 type RemoteCache = map[string]RemoteRomFile
 
 func getRemoteRomFiles(console string) (RemoteCache, []string) {
-	f := getBoxArtHtml(console)
+	boxArtUrl := createBoxArtUrl(console)
+
+	f := getBoxArtHtml(console, boxArtUrl)
 	defer f.Close()
 
 	doc, err := goquery.NewDocumentFromReader(f)

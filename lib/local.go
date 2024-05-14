@@ -1,4 +1,4 @@
-package main
+package lib
 
 import (
 	"log"
@@ -16,7 +16,7 @@ type RomFile struct {
 	AllMatches fuzzy.Ranks
 }
 
-func calculateLocalDeltas(console string, romDir string) {
+func CalculateLocalDeltas(console string, romDir string) {
 	romFiles, err := os.ReadDir(romDir)
 	if err != nil {
 		log.Fatal(err)
