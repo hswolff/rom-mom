@@ -1,7 +1,6 @@
 package lib
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"path"
@@ -27,17 +26,22 @@ func (r *RomFile) PossibleMismatch() bool {
 	return r.HasMatch() && r.AllMatches[0].Distance > distance
 }
 
-func CalculateLocalDeltas(console string, romDir string) (romFiles, possibleMismatches, missingRemotes []RomFile) {
+type RomFiles []RomFile
+
+func (r *RomFiles) Matches() RomFiles {
+	result := filter(*r, func(r RomFile) bool {
+		return r.HasMatch()
+	})
+	return result
+}
+
+func CalculateLocalDeltas(console string, romDir string) (romFiles, possibleMismatches, missingRemotes RomFiles) {
 	dirFiles, err := os.ReadDir(romDir)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	filesExtensions := path.Ext(dirFiles[0].Name())
-
-	// romFileCache := []RomFile{}
-	// possibleMismatches := []RomFile{}
-	// missingRemotes := []RomFile{}
 
 	remoteRomFiles, allRemoteRomNames := getRemoteRomFiles(console)
 
@@ -52,7 +56,7 @@ func CalculateLocalDeltas(console string, romDir string) (romFiles, possibleMism
 			AllMatches: results,
 		}
 
-		if results.Len() > 0 {
+		if romFile.HasMatch() {
 			remoteRomFile := remoteRomFiles[results[0].Target]
 			romFile.RemoteRom = remoteRomFile
 
@@ -66,10 +70,10 @@ func CalculateLocalDeltas(console string, romDir string) (romFiles, possibleMism
 		romFiles = append(romFiles, romFile)
 	}
 
-	mytest := func(r RomFile) bool { return !r.HasMatch() }
-	s2 := filter(romFiles, mytest)
+	// mytest := func(r RomFile) bool { return !r.HasMatch() }
+	// s2 := filter(romFiles, mytest)
 
-	fmt.Println(len(romFiles), len(missingRemotes), len(s2))
+	// fmt.Println(len(romFiles), len(missingRemotes), len(s2))
 	// PrettyPrint(s2)
 	return
 }
