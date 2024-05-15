@@ -27,7 +27,7 @@ func createBoxArtUrl(console string) string {
 	return res
 }
 
-func getBoxArtHtml(console string, boxArtUrl string) *os.File {
+func getHtmlFile(console string, boxArtUrl string) *os.File {
 	folderName := "boxart"
 	htmlFile := path.Join(folderName, fmt.Sprintf("%s.html", console))
 
@@ -73,7 +73,7 @@ type RemoteCache = map[string]RemoteRomFile
 func getRemoteRomFiles(console string) (RemoteCache, []string) {
 	boxArtUrl := createBoxArtUrl(console)
 
-	f := getBoxArtHtml(console, boxArtUrl)
+	f := getHtmlFile(console, boxArtUrl)
 	defer f.Close()
 
 	doc, err := goquery.NewDocumentFromReader(f)
