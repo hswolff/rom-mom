@@ -13,7 +13,10 @@ func init() {
 	rootCmd.AddCommand(renameCmd)
 }
 
-var dryRun bool
+var (
+	dryRun            bool
+	includeMismatches bool
+)
 
 var renameCmd = &cobra.Command{
 	Use:   "rename",
@@ -32,6 +35,10 @@ var renameCmd = &cobra.Command{
 		}
 
 		for _, romFile := range romFiles {
+			if !includeMismatches && romFile.PossibleMismatch() {
+				continue
+			}
+
 			if romFile.HasMatch() {
 				oldPath := filepath.Join(romDir, romFile.LocalName)
 				newPath := filepath.Join(romDir, romFile.RemoteRom.RemoteName)
@@ -41,7 +48,12 @@ var renameCmd = &cobra.Command{
 					action = "SKIPING"
 				}
 
-				fmt.Printf("\n%s  (%s)\n", romFile.LocalName, action)
+				debugText := ""
+				if romFile.PossibleMismatch() {
+					debugText = " (POSSIBLE MISMATCH)"
+				}
+
+				fmt.Printf("\n%s  (%s)%s\n", romFile.LocalName, action, debugText)
 				fmt.Printf("\tCurrent: \t%s\n", oldPath)
 				fmt.Printf("\tNew: \t\t%s\n", newPath)
 
@@ -59,4 +71,5 @@ var renameCmd = &cobra.Command{
 
 func init() {
 	renameCmd.Flags().BoolVar(&dryRun, "dry-run", false, "do a test dry run and don't actually rename")
+	renameCmd.Flags().BoolVar(&includeMismatches, "include-mismatch", false, "also rename possible mismatch file names")
 }

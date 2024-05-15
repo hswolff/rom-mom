@@ -50,16 +50,20 @@ var checkCmd = &cobra.Command{
 					}
 				}
 			case "mismatch":
-				fmt.Println("\t\tLOCAL NAME\t\t\t\t\tREMOTE NAME")
+				if !verbose {
+					fmt.Println("\t\tLOCAL NAME\t\t\t\t\tREMOTE NAME")
+				}
+
 				for _, romFile := range romFiles {
 					if romFile.PossibleMismatch() {
-						fmt.Printf("MISMATCH   %s  ->  %s\n", romFile.LocalName, romFile.RemoteRom.RemoteName)
-
 						if verbose {
-							fmt.Println("All Matches")
+							fmt.Printf("\nMISMATCH   %s\n", romFile.LocalName)
+							fmt.Println("    All Matches")
 							for _, match := range romFile.AllMatches {
-								fmt.Printf("\t%s\n", match.Target)
+								fmt.Printf("\t%s\t(distance: %d)\n", match.Target, match.Distance)
 							}
+						} else {
+							fmt.Printf("MISMATCH   %s  ->  %s\n", romFile.LocalName, romFile.RemoteRom.RemoteName)
 						}
 					}
 				}

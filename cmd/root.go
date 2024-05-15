@@ -60,6 +60,6 @@ func Execute() error {
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVarP(&console, "console", "c", "", "config file (default is $HOME/.cobra.yaml)")
+	rootCmd.PersistentFlags().StringVarP(&console, "console", "c", "", "console we're renaming")
 	rootCmd.PersistentFlags().StringVarP(&romDir, "dir", "d", "", "ROM folder location")
 }
