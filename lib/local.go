@@ -43,7 +43,7 @@ func CalculateLocalDeltas(console string, romDir string) (romFiles, possibleMism
 
 	filesExtensions := path.Ext(dirFiles[0].Name())
 
-	remoteRomFiles, allRemoteRomNames := getRemoteRomFiles(console)
+	remoteRomFiles, allRemoteRomNames := getRemoteRomFiles(console, filesExtensions)
 
 	for _, file := range dirFiles {
 		fileName := file.Name()

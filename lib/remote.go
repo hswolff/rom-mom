@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"os"
 	"path"
+	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -70,7 +71,7 @@ type RemoteRomFile struct {
 
 type RemoteCache = map[string]RemoteRomFile
 
-func getRemoteRomFiles(console string) (RemoteCache, []string) {
+func getRemoteRomFiles(console string, fileExtension string) (RemoteCache, []string) {
 	boxArtUrl := createBoxArtUrl(console)
 
 	f := getHtmlFile(console, boxArtUrl)
@@ -85,8 +86,10 @@ func getRemoteRomFiles(console string) (RemoteCache, []string) {
 
 	allRemoteRomNames := doc.Find("a").Map(func(_ int, s *goquery.Selection) string {
 		anchor, _ := s.Attr("href")
-		remoteName, _ := url.QueryUnescape(anchor)
-		// fmt.Printf("ROM: %s | %s\n", title, remoteName)
+		anchorUnescape, _ := url.QueryUnescape(anchor)
+
+		// rename .png to .{extension}
+		remoteName := strings.Replace(anchorUnescape, path.Ext(anchorUnescape), fileExtension, 1)
 
 		remoteBoxArt, _ := url.JoinPath(boxArtUrl, anchor)
 
