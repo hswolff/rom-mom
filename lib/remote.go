@@ -84,7 +84,6 @@ func getRemoteRomFiles(console string) (RemoteCache, []string) {
 	remoteRomFiles := make(RemoteCache)
 
 	allRemoteRomNames := doc.Find("a").Map(func(_ int, s *goquery.Selection) string {
-		// For each item found, get the title
 		anchor, _ := s.Attr("href")
 		remoteName, _ := url.QueryUnescape(anchor)
 		// fmt.Printf("ROM: %s | %s\n", title, remoteName)

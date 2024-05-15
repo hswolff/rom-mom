@@ -70,10 +70,5 @@ func CalculateLocalDeltas(console string, romDir string) (romFiles, possibleMism
 		romFiles = append(romFiles, romFile)
 	}
 
-	// mytest := func(r RomFile) bool { return !r.HasMatch() }
-	// s2 := filter(romFiles, mytest)
-
-	// fmt.Println(len(romFiles), len(missingRemotes), len(s2))
-	// PrettyPrint(s2)
 	return
 }

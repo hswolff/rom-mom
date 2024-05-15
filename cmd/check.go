@@ -14,7 +14,7 @@ func init() {
 
 var (
 	list        string
-	listOptions []string = []string{"matched", "mismatch", "missing"}
+	listOptions []string = []string{"match", "mismatch", "missing"}
 	verbose     bool
 )
 
@@ -29,7 +29,6 @@ var checkCmd = &cobra.Command{
 		}
 		return nil
 	},
-
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("\n~~check~~\n")
 		romFiles, possibleMismatches, missingRemotes := lib.CalculateLocalDeltas(console, romDir)
@@ -43,7 +42,7 @@ var checkCmd = &cobra.Command{
 			fmt.Printf("Listing %s\n", list)
 
 			switch list {
-			case "matched":
+			case "match":
 				fmt.Println("\t\tLOCAL NAME\t\t\t\t\tREMOTE NAME")
 				for _, romFile := range romFiles {
 					if romFile.HasMatch() {
