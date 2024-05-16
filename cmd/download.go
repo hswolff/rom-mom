@@ -8,7 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/hswolff/rom-art-scraper/lib"
+	"github.com/hswolff/rom-mom/lib"
 	"github.com/spf13/cobra"
 )
 

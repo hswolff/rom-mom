@@ -1,4 +1,4 @@
-module github.com/hswolff/rom-art-scraper
+module github.com/hswolff/rom-mom
 
 go 1.22.3
 

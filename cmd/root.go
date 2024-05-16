@@ -18,7 +18,7 @@ var (
 	includeMismatches bool
 
 	rootCmd = &cobra.Command{
-		Use:   "rom-art-scraper",
+		Use:   "rom-mom",
 		Short: "Fix your ROM collection.",
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 			dirArg, err := cmd.Flags().GetString("dir")

@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/hswolff/rom-art-scraper/cmd"
+	"github.com/hswolff/rom-mom/cmd"
 )
 
 func main() {
