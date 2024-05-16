@@ -13,10 +13,6 @@ func init() {
 	rootCmd.AddCommand(renameCmd)
 }
 
-var (
-	includeMismatches bool
-)
-
 var renameCmd = &cobra.Command{
 	Use:   "rename",
 	Short: "Rename all ROM files to matched file names",
@@ -66,8 +62,4 @@ var renameCmd = &cobra.Command{
 			}
 		}
 	},
-}
-
-func init() {
-	renameCmd.Flags().BoolVar(&includeMismatches, "include-mismatch", false, "also rename possible mismatch file names")
 }

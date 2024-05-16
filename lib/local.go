@@ -3,7 +3,6 @@ package lib
 import (
 	"log"
 	"os"
-	"path"
 	"sort"
 	"strings"
 
@@ -35,17 +34,25 @@ func (r *RomFiles) Matches() RomFiles {
 	return result
 }
 
+var romExtensions = map[string]string{
+	"snes": ".smc",
+}
+
 func CalculateLocalDeltas(console string, romDir string) (romFiles, possibleMismatches, missingRemotes RomFiles) {
 	dirFiles, err := os.ReadDir(romDir)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	filesExtensions := path.Ext(dirFiles[0].Name())
+	filesExtensions := romExtensions[console]
 
 	remoteRomFiles, allRemoteRomNames := getRemoteRomFiles(console, filesExtensions)
 
 	for _, file := range dirFiles {
+		if file.IsDir() {
+			continue
+		}
+
 		fileName := file.Name()
 		fileNameWithoutExtension := strings.TrimSuffix(fileName, filesExtensions)
 		results := fuzzy.RankFindFold(fileNameWithoutExtension, allRemoteRomNames)

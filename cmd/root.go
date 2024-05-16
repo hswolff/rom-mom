@@ -12,9 +12,10 @@ import (
 
 var (
 	// Used for flags.
-	console string
-	romDir  string
-	dryRun  bool
+	console           string
+	romDir            string
+	dryRun            bool
+	includeMismatches bool
 
 	rootCmd = &cobra.Command{
 		Use:   "rom-art-scraper",
@@ -64,4 +65,5 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&console, "console", "c", "", "console we're renaming")
 	rootCmd.PersistentFlags().StringVarP(&romDir, "dir", "d", "", "ROM folder location")
 	rootCmd.PersistentFlags().BoolVar(&dryRun, "dry-run", false, "do a test dry run and don't actually rename")
+	rootCmd.PersistentFlags().BoolVar(&includeMismatches, "include-mismatch", false, "also rename possible mismatch file names")
 }
