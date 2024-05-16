@@ -14,7 +14,6 @@ func init() {
 }
 
 var (
-	dryRun            bool
 	includeMismatches bool
 )
 
@@ -70,6 +69,5 @@ var renameCmd = &cobra.Command{
 }
 
 func init() {
-	renameCmd.Flags().BoolVar(&dryRun, "dry-run", false, "do a test dry run and don't actually rename")
 	renameCmd.Flags().BoolVar(&includeMismatches, "include-mismatch", false, "also rename possible mismatch file names")
 }
